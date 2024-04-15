@@ -99,5 +99,21 @@ Data.listtask = async function (req, result) {
 };
 
 
+Data.searchprojecttext = async function (req, result) {
+
+    try {
+        let userid;
+        const [rows, fields] = await dbConn.query(
+            'SELECT * FROM task WHERE projectname = ? AND createdby = ?', [req.projectname, req.loginuserid]
+        );
+    
+        result(null, rows);
+    } catch (error) {
+        console.error('Error:', error);
+        result(error, null);
+    }
+};
+
+
 
 module.exports = Data;

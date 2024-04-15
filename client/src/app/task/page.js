@@ -4,6 +4,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import moment from "moment"
 
 const Task= () => {
   const loginuserid=localStorage.getItem("LoginUserId")
@@ -14,14 +15,28 @@ const Task= () => {
     TaskName: "",
     TaskDescription: "",
     Spendtime: 0,
-    Priority: "",
+    Priority: "high",
     Assigned: "",
-    Status: "",
+    Status: "assigned",
     Createdby: loginuserid,
     Updateby: loginuserid,
     Createdate: new Date(),
     Updatedate: new Date()
   })
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // Calculate total number of pages
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+  console.log(totalPages);
+
+  // Calculate index of the first and last item of the current page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
  
 
   
@@ -72,35 +87,48 @@ const Task= () => {
       });
       window.location.reload()
   }
+
+  const handleChangeSearch=(e)=>{
+    axios.get(`http://localhost:3003/api/searchprojecttext?loginuserid=${loginuserid}&projectname=${e.target.value}`)
+   .then((res)=>{
+    setData(res.data.ResponseData)
+   })
+   .catch((err)=>{
+    console.log(err)
+   })
+  }
   return (
     <>
-    <h1 className='text-center text-red-400 text-xl'>Task Management</h1>
+    <h1 className='text-center text-red-400 text-2xl font-bold'>Task Management</h1>
     <ToastContainer/>
     <div className='m-auto w-60 mt-3'>
     <label>Project Name</label><br/>
-    <input type="text" name="ProjectName" onChange={(e)=>handleChange(e)}  placeholder='ProjectName'/><br/>
+    <input type="text" name="ProjectName" className="p-2 rounded-md" onChange={(e)=>handleChange(e)}  placeholder='Enter ProjectName'/><br/>
     <label>Task Name</label><br/>
-    <input type="text" name="TaskName" onChange={(e)=>handleChange(e)}  placeholder='TaskName'/><br/>
+    <input type="text" name="TaskName" className="p-2 rounded-md" onChange={(e)=>handleChange(e)}  placeholder='Enter TaskName'/><br/>
     <label>Task Description</label><br/>
-    <input type="text" name="TaskDescription" onChange={(e)=>handleChange(e)}  placeholder='TaskDescription'/><br/>
+    <input type="text" name="TaskDescription" className="p-2 rounded-md" onChange={(e)=>handleChange(e)}  placeholder='Enter TaskDescription'/><br/>
     <label>Spend Time(in hrs)</label><br/>
-    <input type="number" name="Spendtime" onChange={(e)=>handleChange(e)}  placeholder='Spendtime'/><br/>
+    <input type="number" name="Spendtime" className="p-2 rounded-md" onChange={(e)=>handleChange(e)}  placeholder='Enter Spendtime'/><br/>
     <label>Priority</label><br/>
-    <select  name="Priority" onChange={(e)=>handleChange(e)}  placeholder='Priority'>
+    <select  name="Priority" className="p-2 rounded-md" onChange={(e)=>handleChange(e)}  placeholder='Enter Priority'>
         <option value="high">High</option>
         <option value="medium">Medium</option>
         <option value="low">Low</option>
     </select><br/>
     <label>Assigned</label><br/>
-    <input type="text" name="Assigned" onChange={(e)=>handleChange(e)}  placeholder='Assigned'/><br/>
+    <input type="text" name="Assigned" className="p-2 rounded-md" onChange={(e)=>handleChange(e)}  placeholder='Enter Assigned'/><br/>
     <label>Status</label><br/>
-    <select  name="Status" onChange={(e)=>handleChange(e)}  placeholder='Status'>
+    <select  name="Status" className="p-2 rounded-md" onChange={(e)=>handleChange(e)}  placeholder='Enter Status'>
         <option value="assigned">Assigned</option>
         <option value="pending">Pending</option>
     </select><br/>
     <button type="submit" onClick={handleSubmit} className='mt-2 bg-slate-400 w-20 m-auto px-1 py-2 rounded-xl text-white'>Submit</button>
     </div>
-
+    
+    <div className='justify-end flex  w-50 p-2 rounded-md'>
+      <input type="text" className=' p-2 rounded-md' placeholder='Search by Project Name' onChange={(e)=>handleChangeSearch(e)}/>
+    </div>
     <div className='mt-3'>
       <table>
         <thead>
@@ -118,7 +146,7 @@ const Task= () => {
           </tr>
         </thead>
         <tbody>
-          {data?.map((item,index)=>{
+          {currentItems?.map((item,index)=>{
             return (
               <tr>
                 <td>{item.projectname}</td>
@@ -128,13 +156,31 @@ const Task= () => {
                 <td>{item.priority}</td>
                 <td>{item.assigned}</td>
                 <td>{item.spendtime}</td>
-                <td>{item.createddate}</td>
-                <td>{item.updatedate}</td>
+                <td>{moment(item.createddate).format("DD-MM-YYYY")}</td>
+                <td>{moment(item.updatedate).format("DD-MM-YYYY")}</td>
               </tr>
             )
           })}
         </tbody>
       </table>
+
+      <div className="mt-4 flex justify-end">
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={currentPage===1 ? "bg-slate-300 border border-black px-3 py-1": "border border-black px-3 py-1"}
+        >
+          Prev
+        </button>
+        <p className="border border-black p-2 mx-1">{currentPage}</p>
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          className={indexOfLastItem >= data.length ? "bg-slate-300 border border-black px-3 py-1  mx-1": "border border-black px-3 py-1  mx-1"}
+          disabled={indexOfLastItem >= data.length}
+        >
+          Next
+        </button>
+      </div>
     </div>
   </>
   )

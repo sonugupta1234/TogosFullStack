@@ -84,15 +84,15 @@ export default function Home() {
   return (
     <>
       {/* <main className="flex min-h-screen flex-col items-center justify-between p-24"> */}
-      <h1 className="text-red-400 text-center text-xl">Register</h1>
+      <h1 className="text-red-400 text-center text-2xl font-bold">Register</h1>
       <ToastContainer />
       <div className='m-auto w-60 mt-3'>
         <label>Username<span className="text-red-400">*</span></label><br />
-        <input type="text" value={username} onChange={(e) => setUserName(e.target.value)} placeholder="Enter Username"/>
+        <input type="text" value={username} className="p-2 rounded-md" onChange={(e) => setUserName(e.target.value)} placeholder="Enter Username"/>
         <label>Email<span className="text-red-400">*</span></label><br />
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter Email"/>
+        <input type="email" value={email} className="p-2 rounded-md" onChange={(e) => setEmail(e.target.value)} placeholder="Enter Email"/>
         <label>Password<span className="text-red-400">*</span></label><br />
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter Password"/>
+        <input type="password" value={password} className="p-2 rounded-md" onChange={(e) => setPassword(e.target.value)} placeholder="Enter Password"/>
         <Link href={"/login"} className="text-red-400 text-xs mt-3 mb-2" >Already a User? Please Login</Link>
         <button type="submit" onClick={handleSubmit} className='mt-2 bg-slate-400 w-20 m-auto px-1 py-2 rounded-xl text-white'>Submit</button>
         {/* </main> */}

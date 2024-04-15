@@ -15,5 +15,5 @@ router.post("/task", [authJwt.verifyToken], Controllerdata.task);
 
 router.get("/listtask",  Controllerdata.listtask);
 
-
+router.get("/searchprojecttext",  Controllerdata.searchprojecttext);
 module.exports = router; 

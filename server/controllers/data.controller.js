@@ -192,3 +192,41 @@ exports.task = function (req, res) {
     
   };
 
+
+  exports.searchprojecttext = function (req, res) {
+    //handles null error
+  
+      Data.searchprojecttext(req.query, function (err, result) {
+        if (err)
+          res.json({
+            ResponseID: 0,
+            ResponseCode: "ERROR",
+            ResponseData: [],
+            ResponseMessage: err,
+            ResponseJSON: "",
+            OtherData: "",
+          });
+  
+        if (result)
+           res.json({
+            ResponseID: 0,
+            ResponseCode: "SUCCESS",
+            ResponseData: result,
+            ResponseMessage: "Task Listed successfully!",
+            ResponseJSON: "",
+            OtherData: "",
+          });
+        else
+          res.json({
+            ResponseID: result,
+            ResponseCode: "ERROR",
+            ResponseData: [],
+            ResponseMessage: "Something went wrong!",
+            ResponseJSON: "",
+            OtherData: "",
+          });
+      });
+    
+  };
+
+
